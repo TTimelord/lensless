@@ -30,7 +30,7 @@ for i in range(100):
     angle = i * 0.01 - 1
     rotate_mat = cv2.getRotationMatrix2D((int(width/2), int(height/2)), angle, 1)  # center pos, rotation angle, zoom ratio
     rotated_img = cv2.warpAffine(img, rotate_mat, (int(width), int(height)))  # image, rotation matrix, image size after rotation
-    rotated_img = rotated_img[int(height/10):-int(height/10), (int(width/10)):-int(width/10)]  # Cut the edge (10:-10 means cutting off upper and lower 10 pixels)
+    rotated_img = rotated_img[int(height/10):-int(height/10), (int(width/10)):-int(width/10)]  # Cut the edge (10:-10) means cutting off upper and lower 10 pixels)
     # cv2.imshow("rotated", rotated_img)
     # cv2.waitKey(0)
 

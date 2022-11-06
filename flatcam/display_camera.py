@@ -15,7 +15,7 @@ def calibration(N):
         myapp.emit_image_update(name)  # Update the image to be shown
         time.sleep(1.5)
         directory = "data/captured/calibration/horizontal/" + str(i) + "_1.png"
-        cap_img = cam.get_pic_processed(angle=-0.42, size=1024, downsample=1024)  # the angle is calibrated in rotation_calibration.py
+        cap_img = cam.get_pic_original()  # the angle is calibrated in rotation_calibration.py
         cv2.imwrite(directory, cap_img)
 
         time.sleep(0.1)
@@ -24,7 +24,7 @@ def calibration(N):
         time.sleep(1.5)
         directory = "data/captured/calibration/horizontal/" + str(i) + "_2.png"
         cam.save_pic(directory)
-        cap_img = cam.get_pic_processed(angle=-0.42, size=1024, downsample=1024)  # the angle is calibrated in rotation_calibration.py
+        cap_img = cam.get_pic_original()  # the angle is calibrated in rotation_calibration.py
         cv2.imwrite(directory, cap_img)
 
     for i in range(1, N+1):
@@ -34,7 +34,7 @@ def calibration(N):
         time.sleep(1.5)
         directory = "data/captured/calibration/vertical/" + str(i) + "_1.png"
         cam.save_pic(directory)
-        cap_img = cam.get_pic_processed(angle=-0.42, size=1024, downsample=1024)  # the angle is calibrated in rotation_calibration.py
+        cap_img = cam.get_pic_original()  # the angle is calibrated in rotation_calibration.py
         cv2.imwrite(directory, cap_img)
 
         time.sleep(0.1)
@@ -43,7 +43,7 @@ def calibration(N):
         time.sleep(1.5)
         directory = "data/captured/calibration/vertical/" + str(i) + "_2.png"
         cam.save_pic(directory)
-        cap_img = cam.get_pic_processed(angle=-0.42, size=1024, downsample=1024)  # the angle is calibrated in rotation_calibration.py
+        cap_img = cam.get_pic_original()  # the angle is calibrated in rotation_calibration.py
         cv2.imwrite(directory, cap_img)
 
     print("Process finished!")
@@ -102,16 +102,16 @@ def green_point():
 def test():
     height, width = 2160, 3840
     img = np.zeros((height, width, 3), np.uint8)
-    cv2.circle(img, (int(width/2), int(height/2)), 20, (255, 255, 255), -1, cv2.LINE_AA)  # draw circle
-    # img[int(height/2)-500:int(height/2)+500, int(width/2)-30:int(width/2)+30, :] = 255
+    # cv2.circle(img, (int(width/2), int(height/2)), 20, (255, 255, 255), -1, cv2.LINE_AA)  # draw circle
+    img[int(height/2)-500:int(height/2)+500, int(width/2)-60:int(width/2)+60, :] = 255
     name = "data/display/test/test.png"
     cv2.imwrite(name, img)
     myapp.emit_image_update(name)
     time.sleep(1.5)
-    cap_img = cam.get_pic()
+    cap_img = cam.get_pic_original()
     cv2.imwrite('data/captured/test/test_origin.png', cap_img)
-    cap_img = cam.get_pic_processed(angle=-0.42, size=1024, downsample=1024)  # the angle is calibrated in rotation_calibration.py
-    cv2.imwrite('data/captured/test/test.png', cap_img)
+    cap_img = cam.get_pic_processed(-0.48, (1024, 1024), (512, 512))  # the angle is calibrated in rotation_calibration.py
+    cv2.imwrite('data/captured/test/test_processed.png', cap_img)
 
 
 if __name__ == "__main__":

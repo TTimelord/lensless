@@ -20,7 +20,7 @@ flatcam.clean_calib(calib)
 lmbd = 3e-4  # L2 regularization parameter
 # lmbd = 100
 # recon = flatcam.fcrecon(meas, calib, lmbd)
-recon = flatcam.fcrecon_new(meas.copy(), calib, lmbd)
+recon = flatcam.fcrecon(meas.copy(), calib, lmbd)
 print('max: %f, min: %f.' % (np.max(recon), np.min(recon)))
 
 # using the reconstructed image to regenerate sensor measurement

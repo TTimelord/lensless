@@ -8,6 +8,7 @@ class Camera:
     """
     Class for initializing camera and capturing pictures.
     """
+
     def __init__(self):
         self.index = 1
         self.thread = threading.Thread(target=self.init_cam)
@@ -29,7 +30,7 @@ class Camera:
         cap.set(cv2.CAP_PROP_EXPOSURE, 20)  # 曝光
 
         cap.set(cv2.CAP_PROP_AUTO_WB, 0)
-        cap.set(cv2.CAP_PROP_WB_TEMPERATURE, 6500)
+        cap.set(cv2.CAP_PROP_WB_TEMPERATURE, 6400)
 
         # Original: 640*480, calibration: 620*500
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 宽度
@@ -90,26 +91,27 @@ class Camera:
         print("save " + directory + " successfully! Time consumed: " + str(t_end - t_start) + "s")
         self.index += 1
 
-    def get_pic(self):
+    def get_pic_original(self):
         print('get original frame.')
         return self.frame
 
-    def get_pic_processed(self, angle, size, downsample):
+    def get_pic_processed(self, angle, clip_size, downsample_size):
         img = self.frame
         width, height = img.shape[1], img.shape[0]
-        rotate_mat = cv2.getRotationMatrix2D((width / 2, height / 2), angle,
-                                             1)  # center pos, rotation angle, zoom ratio
-        rotated_img = cv2.warpAffine(img, rotate_mat, (width, height))
+        if angle:
+            rotate_mat = cv2.getRotationMatrix2D((width / 2, height / 2), angle,
+                                                 1)  # center pos, rotation angle, zoom ratio
+            rotated_img = cv2.warpAffine(img, rotate_mat, (width, height))
+        else:
+            rotated_img = img
 
-        start_x = int(height / 2 - size / 2)
-        start_y = int(width / 2 - size / 2)
-        end_x = start_x + size
-        end_y = start_y + size
-        # print(rotated_img.shape)
-        # print(start_x, start_y, end_x, end_y)
+        start_x = int(height / 2 - clip_size[1] / 2)  # clip_size: (width, height)
+        start_y = int(width / 2 - clip_size[0] / 2)
+        end_x = start_x + clip_size[1]
+        end_y = start_y + clip_size[0]
+
         rotated_img = rotated_img[start_x:end_x, start_y:end_y]  # select desired zone
-        if downsample < size:
-            rotated_img = cv2.resize(rotated_img, (downsample, downsample))
+        if downsample_size < clip_size:
+            rotated_img = cv2.resize(rotated_img, downsample_size)
 
         return rotated_img
-
