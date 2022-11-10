@@ -25,10 +25,10 @@ mat_reconstruct = np.linalg.multi_dot([U, np.diag(S), VT])
 print(mat_reconstruct)
 '''
 
-# img = cv2.imread('data/captured/test/test.png')
+# img = cv2.imread('data/captured/test/test_processed.png')
 img_1 = cv2.imread('data/captured/calibration/horizontal/3_1.png')
-img_2 = cv2.imread('data/captured/calibration/horizontal/3_2.png')
-img = img_1 - img_2
+# img_2 = cv2.imread('data/captured/calibration/horizontal/3_2.png')
+# img = img_1 - img_2
 
 
 img = img[:, :, 1]

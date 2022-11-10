@@ -15,8 +15,14 @@ flatcam.clean_calib(calib)
 # meas_2 = cv2.imread('data/captured/calibration/horizontal/9_2.png')
 # meas_1 = cv2.imread('data/captured/calibration/vertical/21_1.png')
 # meas_2 = cv2.imread('data/captured/calibration/vertical/21_2.png')
-meas_1 = cv2.imread('data/captured/calibration/horizontal/2_1.png')
-meas_2 = cv2.imread('data/captured/calibration/horizontal/2_2.png')
+# meas_1 = cv2.imread('data/captured/calibration/horizontal/2_1.png')
+# meas_2 = cv2.imread('data/captured/calibration/horizontal/2_2.png')
+# meas_1 = cv2.imread('data/captured/calibration/horizontal/1_1.png')
+# meas_2 = cv2.imread('data/captured/calibration/horizontal/1_2.png')
+
+meas_1 = cv2.imread('data/captured/calibration/horizontal/49_1.png')
+meas_2 = cv2.imread('data/captured/calibration/horizontal/49_2.png')
+
 meas = meas_1.astype(float) - meas_2.astype(float)
 meas = meas.astype(float)/255
 meas_processed = process_img(meas, calib['angle'], calib['clipSize'], calib['downsampleSize'])

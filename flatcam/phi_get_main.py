@@ -7,7 +7,7 @@ angle = -0.48  # Rotation angle of the sensor measurement.
 clip_size = (1024, 1024)  # Size of image clipped from the original sensor measurement: (width, height)
 downsample_size = (512, 512)  # downsample after clipping: (width, height)
 
-N = 32  # Size of hadamard matrix in calibration, size of recontructed image
+N = 128  # Size of hadamard matrix in calibration, size of recontructed image
 
 
 phil_get = horizontal(N, clip_size, downsample_size, angle)
