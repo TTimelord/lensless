@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import max_len_seq
-from scipy.linalg import hadamard
 import cv2
 import cupy as cp
 from cupyx.scipy.signal import convolve2d
@@ -71,6 +70,7 @@ class FlatcamSimulation:
 
 
 if __name__ == '__main__':
+    from scipy.linalg import hadamard
     sensor_size = (512, 512)
     scene_ratio = 0.25
     CRA = np.pi / 6
