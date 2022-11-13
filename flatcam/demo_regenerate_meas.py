@@ -20,10 +20,12 @@ flatcam.clean_calib(calib)
 # meas_1 = cv2.imread('data/captured/calibration/horizontal/1_1.png')
 # meas_2 = cv2.imread('data/captured/calibration/horizontal/1_2.png')
 
-meas_1 = cv2.imread('data/captured/calibration/horizontal/49_1.png')
-meas_2 = cv2.imread('data/captured/calibration/horizontal/49_2.png')
+# meas_1 = cv2.imread('data/captured/calibration/horizontal/49_1.png')
+# meas_2 = cv2.imread('data/captured/calibration/horizontal/49_2.png')
 
-meas = meas_1.astype(float) - meas_2.astype(float)
+meas = cv2.imread('../flatcam_simulation/data/captured/test/hall.png')
+
+# meas = meas_1.astype(float) - meas_2.astype(float)
 meas = meas.astype(float)/255
 meas_processed = process_img(meas, calib['angle'], calib['clipSize'], calib['downsampleSize'])
 print('meas, max: %f, min: %f.' % (np.max(meas_processed), np.min(meas_processed)))
@@ -33,7 +35,7 @@ print('meas, max: %f, min: %f.' % (np.max(meas_processed), np.min(meas_processed
 # cv2.waitKey(0)
 
 """ Reconstruct """
-lmbd = 0.009  # L2 regularization parameter
+lmbd = 0.0  # L2 regularization parameter
 # lmbd = 100
 # recon = flatcam.fcrecon(meas, calib, lmbd)
 recon = flatcam.fcrecon(meas.copy(), calib, lmbd)
@@ -81,63 +83,63 @@ plt.title('regenerate measurement')
 # plt.colorbar()
 
 color_title = ['_r', '_g', '_b']
-# for i in range(3):
-#     plt.subplot(4, 5, 1 + 5 * (i + 1))
-#     plt.imshow(meas_processed[:, :, 2-i], cmap='gray', vmin=0, vmax=1)
-#     plt.axis('off')
-#     plt.title('measurement' + color_title[i])
-#
-#     plt.subplot(4, 5, 2 + 5 * (i + 1))
-#     plt.imshow(cv2.flip(recon[:, :, 2-i].clip(0, 1), 1), cmap='gray', vmin=0, vmax=1)
-#     plt.axis('off')
-#     plt.title('reconstruction' + color_title[i])
-#
-#     plt.subplot(4, 5, 3 + 5 * (i + 1))
-#     plt.imshow(cv2.flip(recon[:, :, 2-i], 1), vmin=-recon_max, vmax=recon_max, cmap='bwr')
-#     plt.axis('off')
-#     plt.title('reconstruction_uncropped' + color_title[i])
-#     plt.colorbar(fraction=0.05, pad=0.05)
-#
-#     plt.subplot(4, 5, 4 + 5 * (i + 1))
-#     plt.imshow(re_meas[:, :, 2-i], cmap='gray', vmin=0, vmax=1)
-#     plt.axis('off')
-#     plt.title('regenerate measurement' + color_title[i])
-#
-#     plt.subplot(4, 5, 5 + 5 * (i + 1))
-#     plt.imshow(error[:, :, 2-i], vmin=-error_max, vmax=error_max, cmap='bwr')
-#     plt.axis('off')
-#     plt.title('error' + color_title[i])
-#     plt.colorbar(fraction=0.05, pad=0.05)
-
 for i in range(3):
     plt.subplot(4, 5, 1 + 5 * (i + 1))
-    plt.imshow(meas_processed[:, :, 2 - i], cmap='bwr')
+    plt.imshow(meas_processed[:, :, 2-i], cmap='gray', vmin=0, vmax=1)
     plt.axis('off')
     plt.title('measurement' + color_title[i])
-    plt.colorbar(fraction=0.05, pad=0.05)
 
     plt.subplot(4, 5, 2 + 5 * (i + 1))
-    plt.imshow(cv2.flip(recon[:, :, 2 - i].clip(0, 1), 1), cmap='gray', vmin=0, vmax=1)
+    plt.imshow(cv2.flip(recon[:, :, 2-i].clip(0, 1), 1), cmap='gray', vmin=0, vmax=1)
     plt.axis('off')
     plt.title('reconstruction' + color_title[i])
 
     plt.subplot(4, 5, 3 + 5 * (i + 1))
-    plt.imshow(cv2.flip(recon[:, :, 2 - i], 1), vmin=-recon_max, vmax=recon_max, cmap='bwr')
+    plt.imshow(cv2.flip(recon[:, :, 2-i], 1), vmin=-recon_max, vmax=recon_max, cmap='bwr')
     plt.axis('off')
     plt.title('reconstruction_uncropped' + color_title[i])
     plt.colorbar(fraction=0.05, pad=0.05)
 
     plt.subplot(4, 5, 4 + 5 * (i + 1))
-    plt.imshow(re_meas[:, :, 2 - i], cmap='bwr')
+    plt.imshow(re_meas[:, :, 2-i], cmap='gray', vmin=0, vmax=1)
     plt.axis('off')
     plt.title('regenerate measurement' + color_title[i])
-    plt.colorbar(fraction=0.05, pad=0.05)
 
     plt.subplot(4, 5, 5 + 5 * (i + 1))
-    plt.imshow(error[:, :, 2 - i], vmin=-error_max, vmax=error_max, cmap='bwr')
+    plt.imshow(error[:, :, 2-i], vmin=-error_max, vmax=error_max, cmap='bwr')
     plt.axis('off')
     plt.title('error' + color_title[i])
     plt.colorbar(fraction=0.05, pad=0.05)
+
+# for i in range(3):
+#     plt.subplot(4, 5, 1 + 5 * (i + 1))
+#     plt.imshow(meas_processed[:, :, 2 - i], cmap='bwr')
+#     plt.axis('off')
+#     plt.title('measurement' + color_title[i])
+#     plt.colorbar(fraction=0.05, pad=0.05)
+#
+#     plt.subplot(4, 5, 2 + 5 * (i + 1))
+#     plt.imshow(cv2.flip(recon[:, :, 2 - i].clip(0, 1), 1), cmap='gray', vmin=0, vmax=1)
+#     plt.axis('off')
+#     plt.title('reconstruction' + color_title[i])
+#
+#     plt.subplot(4, 5, 3 + 5 * (i + 1))
+#     plt.imshow(cv2.flip(recon[:, :, 2 - i], 1), vmin=-recon_max, vmax=recon_max, cmap='bwr')
+#     plt.axis('off')
+#     plt.title('reconstruction_uncropped' + color_title[i])
+#     plt.colorbar(fraction=0.05, pad=0.05)
+#
+#     plt.subplot(4, 5, 4 + 5 * (i + 1))
+#     plt.imshow(re_meas[:, :, 2 - i], cmap='bwr')
+#     plt.axis('off')
+#     plt.title('regenerate measurement' + color_title[i])
+#     plt.colorbar(fraction=0.05, pad=0.05)
+#
+#     plt.subplot(4, 5, 5 + 5 * (i + 1))
+#     plt.imshow(error[:, :, 2 - i], vmin=-error_max, vmax=error_max, cmap='bwr')
+#     plt.axis('off')
+#     plt.title('error' + color_title[i])
+#     plt.colorbar(fraction=0.05, pad=0.05)
 
 plt.show()
 

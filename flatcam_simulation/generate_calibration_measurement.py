@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from simulation import FlatcamSimulation
 from scipy.linalg import hadamard
 import numpy as np
@@ -9,7 +11,7 @@ scene_ratio = 0.25
 CRA = np.pi / 6
 fc_sim = FlatcamSimulation(sensor_size, scene_ratio, CRA)
 mask = fc_sim.make_mask(mls_length=7)
-psf = fc_sim.calculate_psf(size_factor=1.8, amplitude_factor=0.0001, blur=True)
+psf = fc_sim.calculate_psf(size_factor=1.8, amplitude_factor=0.00009, blur=False)
 
 # scene = np.zeros((128, 128))
 # scene[64, 64] = 1
@@ -29,6 +31,12 @@ for k in range(N):
     X_k_2 = -X_k_1  # The negative image
     X_k_1[X_k_1 == -1] = 0  # Set negative entries to 0
     X_k_2[X_k_2 == -1] = 0
+
+    # visualization
+    # fig, ax = plt.subplots(1, 2)
+    # ax[0].imshow(X_k_1)
+    # ax[1].imshow(X_k_2)
+    # plt.show()
 
     meas_1 = fc_sim.simulate_measurement(X_k_1)
     meas_2 = fc_sim.simulate_measurement(X_k_2)

@@ -36,15 +36,23 @@ class FlatcamSimulation:
         Returns:
 
         """
-        size_factor *= self.sensor_size[0] / self.mask.shape[0]
+        size_factor *= 2 * self.sensor_size[0] / self.mask.shape[0]
         print('size_factor:', size_factor)
-        self.psf = cv2.resize(self.mask,
-                              dsize=(int(size_factor * self.mask.shape[1]), int(size_factor * self.mask.shape[0])),
-                              interpolation=cv2.INTER_NEAREST)
+        psf = cv2.resize(self.mask,
+                         dsize=(int(size_factor * self.mask.shape[1]), int(size_factor * self.mask.shape[0])),
+                         interpolation=cv2.INTER_NEAREST)
+
+        width = int((1 + self.scene_ratio) * self.sensor_size[1]) + 2  # +1 to ensure psf is big enough.
+        height = int((1 + self.scene_ratio) * self.sensor_size[0]) + 2
+        start_x = int(0.5 * psf.shape[0]) - int(0.5 * height)
+        start_y = int(0.5 * psf.shape[1]) - int(0.5 * width)
+        psf = psf[start_x:start_x + height, start_y:start_y + width]
+
         if blur:
-            self.psf = cv2.blur(self.psf, (5, 5))
-        self.psf *= amplitude_factor
-        print('size of psf: ', self.psf.shape)
+            psf = cv2.blur(psf, (5, 5))
+        psf *= amplitude_factor
+        print('size of psf: ', psf.shape)
+        self.psf = psf
         return self.psf
         # fig, ax = plt.subplots()
         # ax.imshow(self.psf, cmap='gray')
@@ -71,12 +79,13 @@ class FlatcamSimulation:
 
 if __name__ == '__main__':
     from scipy.linalg import hadamard
+
     sensor_size = (512, 512)
     scene_ratio = 0.25
     CRA = np.pi / 6
     fc_sim = FlatcamSimulation(sensor_size, scene_ratio, CRA)
     mask = fc_sim.make_mask(mls_length=7)
-    psf = fc_sim.calculate_psf(size_factor=1.8, amplitude_factor=0.0001, blur=True)
+    psf = fc_sim.calculate_psf(size_factor=1.8, amplitude_factor=0.00009, blur=False)
 
     # scene = np.zeros((128, 128))
     # scene[64, 64] = 1
