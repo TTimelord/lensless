@@ -27,11 +27,11 @@ print(mat_reconstruct)
 
 # img = cv2.imread('data/captured/test/test_processed.png')
 img_1 = cv2.imread('data/captured/calibration/horizontal/3_1.png')
-# img_2 = cv2.imread('data/captured/calibration/horizontal/3_2.png')
-# img = img_1 - img_2
+img_2 = cv2.imread('data/captured/calibration/horizontal/3_2.png')
+img = img_1 - img_2
 
 
-img = img[:, :, 1]
+img = img_1[:, :, 1]
 print(img.shape)
 cv2.imshow("img", img)
 cv2.waitKey(0)
@@ -41,6 +41,7 @@ rowMeans = img.mean(axis=1, keepdims=True)
 colMeans = img.mean(axis=0, keepdims=True)
 allMean = rowMeans.mean()
 img_sep = img - rowMeans - colMeans + allMean
+# img_sep = img
 
 U, S, VT = np.linalg.svd(img_sep)
 print('sigma_0/sigma_1:', S[0]/S[1])

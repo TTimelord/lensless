@@ -22,16 +22,18 @@ scene_ratio = 0.25
 CRA = np.pi / 6
 fc_sim = FlatcamSimulation(sensor_size, scene_ratio, CRA)
 mask = fc_sim.make_mask(mls_length=7)
-psf = fc_sim.calculate_psf(size_factor=4.0, amplitude_factor=6e-5, blur=False)
+psf = fc_sim.calculate_psf(size_factor=1.5, amplitude_factor=9e-5, blur=False)
+N = 128
 
-phil = np.zeros((512, 32))
-phir = np.zeros((512, 32))
+
+phil = np.zeros((512, N))
+phir = np.zeros((512, N))
 
 u_sign = np.zeros(512)
 v_sign = np.zeros(512)
 
-for i in range(32):
-    scene = np.zeros((32, 32))
+for i in range(N):
+    scene = np.zeros((N, N))
     scene[i, 0] = 1
 
     meas = fc_sim.simulate_measurement(scene, visualization=False)
@@ -49,8 +51,8 @@ for i in range(32):
     print(i, sigma[0]/sigma[1])
 
 
-for j in range(32):
-    scene = np.zeros((32, 32))
+for j in range(N):
+    scene = np.zeros((N, N))
     scene[0, j] = 1
 
     meas = fc_sim.simulate_measurement(scene, visualization=False)
@@ -74,7 +76,7 @@ downsample_size = (512, 512)  # downsample after clipping: (width, height)
 
 clipSize = [clip_size[1], clip_size[0]]
 downsampleSize = [downsample_size[1], downsample_size[0]]
-sceneSize = [32, 32]
+sceneSize = [N, N]
 
 savemat('calib.mat',
         {'P1b': phil, 'P1g': phil, 'P1r': phil, 'Q1b': phir,

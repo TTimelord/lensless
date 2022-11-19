@@ -11,13 +11,13 @@ scene_ratio = 0.25
 CRA = np.pi / 6
 fc_sim = FlatcamSimulation(sensor_size, scene_ratio, CRA)
 mask = fc_sim.make_mask(mls_length=7)
-psf = fc_sim.calculate_psf(size_factor=1.8, amplitude_factor=0.00009, blur=False)
+psf = fc_sim.calculate_psf(size_factor=1.5, amplitude_factor=9e-5, blur=False)
 
 # scene = np.zeros((128, 128))
 # scene[64, 64] = 1
 # scene = cv2.circle(scene, (64, 64), 10, 1, -1, cv2.LINE_AA)
 
-N = 32
+N = 128
 H = hadamard(N)
 I_vector = np.ones((N, 1))
 

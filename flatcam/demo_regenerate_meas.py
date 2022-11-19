@@ -23,7 +23,7 @@ flatcam.clean_calib(calib)
 # meas_1 = cv2.imread('data/captured/calibration/horizontal/49_1.png')
 # meas_2 = cv2.imread('data/captured/calibration/horizontal/49_2.png')
 
-meas = cv2.imread('../flatcam_simulation/data/captured/test/hall.png')
+meas = cv2.imread('../flatcam_simulation/data/captured/test/green.png')
 
 # meas = meas_1.astype(float) - meas_2.astype(float)
 meas = meas.astype(float)/255
@@ -35,7 +35,7 @@ print('meas, max: %f, min: %f.' % (np.max(meas_processed), np.min(meas_processed
 # cv2.waitKey(0)
 
 """ Reconstruct """
-lmbd = 0.0  # L2 regularization parameter
+lmbd = 3e-4  # L2 regularization parameter
 # lmbd = 100
 # recon = flatcam.fcrecon(meas, calib, lmbd)
 recon = flatcam.fcrecon(meas.copy(), calib, lmbd)
@@ -65,7 +65,8 @@ plt.imshow(cv2.cvtColor((meas_processed*255).astype(np.uint8), cv2.COLOR_BGR2RGB
 plt.axis('off')
 plt.title('measurement')
 plt.subplot(4, 5, 2)
-plt.imshow(cv2.cvtColor(cv2.flip((recon*255).clip(0, 255).astype(np.uint8), 1), cv2.COLOR_BGR2RGB))
+# plt.imshow(cv2.cvtColor(cv2.flip((recon*255).clip(0, 255).astype(np.uint8), 1), cv2.COLOR_BGR2RGB))
+plt.imshow(cv2.cvtColor((recon*255).clip(0, 255).astype(np.uint8), cv2.COLOR_BGR2RGB))
 plt.axis('off')
 plt.title('reconstruction')
 # plt.subplot(4, 5, 3)
@@ -90,7 +91,8 @@ for i in range(3):
     plt.title('measurement' + color_title[i])
 
     plt.subplot(4, 5, 2 + 5 * (i + 1))
-    plt.imshow(cv2.flip(recon[:, :, 2-i].clip(0, 1), 1), cmap='gray', vmin=0, vmax=1)
+    # plt.imshow(cv2.flip(recon[:, :, 2-i].clip(0, 1), 1), cmap='gray', vmin=0, vmax=1)
+    plt.imshow(recon[:, :, 2-i].clip(0, 1), cmap='gray', vmin=0, vmax=1)
     plt.axis('off')
     plt.title('reconstruction' + color_title[i])
 

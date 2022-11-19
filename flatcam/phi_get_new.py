@@ -10,9 +10,7 @@ Read the image taken for calibration and generate phil and phir
 
 """ SVD decomposition"""
 def SVD_getu(matrix):
-    U, sigma, VT = np.linalg.svd(matrix)
-    u = U[:, 0] * np.sqrt(sigma[0])  # Assign the singular value
-    print(sigma[0] / sigma[1])  # Test for image's separability
+
     return u
 
 
@@ -30,9 +28,9 @@ def horizontal(N, clip_size, downsample_size, angle):
     H = hadamard(N)
     H_inverse = np.linalg.inv(H)
     height = downsample_size[1]
-    U_b = np.zeros(shape=(height, N))
-    U_g = np.zeros(shape=(height, N))
-    U_r = np.zeros(shape=(height, N))
+    U_all = np.zeros(shape=(3, height, N))
+    v_sign = np.zeros((3, height))
+    phil = np.zeros_like(U_all)
 
     for i in range(1, N + 1):
         name_1 = "data/captured/calibration/horizontal/" + str(i) + "_1.png"
@@ -46,20 +44,27 @@ def horizontal(N, clip_size, downsample_size, angle):
         matrix = matrix / 255  # normalize to [0, 1]
 
         for j in range(3):
-            matrix[:, :, j] = make_separable(matrix[:, :, j])
+            mat = make_separable(matrix[:, :, j])
+            U, sigma, VT = np.linalg.svd(mat)
+            u = U[:, 0] * np.sqrt(sigma[0])
+            v = VT[0, :].T * np.sqrt(sigma[0])
+            print(sigma[0] / sigma[1])  # Test for image's separability
+            if i == 1:
+                v_sign[j] = v
+            else:
+                if np.dot(v_sign[j], v) < 0:
+                    u = -u
+            U_all[j, :, i - 1] = u
 
-        U_b[:, i - 1] = SVD_getu(matrix[:, :, 0])
-        U_g[:, i - 1] = SVD_getu(matrix[:, :, 1])
-        U_r[:, i - 1] = SVD_getu(matrix[:, :, 2])
         print("Get %sth column of u" % i)
 
     """ Calculate phil for each color channel """
-    phil_b = U_b.dot(H_inverse)
-    phil_g = U_g.dot(H_inverse)
-    phil_r = U_r.dot(H_inverse)
+    for i in range(3):
+        phil[i] = U_all[i].dot(H_inverse)
+
     print("phil is generated")
 
-    return np.dstack([phil_b, phil_g, phil_r])
+    return phil
 
 
 """ Main method for calibrating phir using vertical strip image """
@@ -69,9 +74,9 @@ def vertical(N, clip_size, downsample_size, angle):
     H = hadamard(N)
     H_inverse = np.linalg.inv(H)
     width = downsample_size[0]
-    V_b = np.zeros(shape=(width, N))
-    V_g = np.zeros(shape=(width, N))
-    V_r = np.zeros(shape=(width, N))
+    V_all = np.zeros(shape=(3, width, N))
+    u_sign = np.zeros((3, width))
+    phir = np.zeros_like(V_all)
 
     for i in range(1, N + 1):
         name_1 = "data/captured/calibration/vertical/" + str(i) + "_1.png"
@@ -85,16 +90,23 @@ def vertical(N, clip_size, downsample_size, angle):
         matrix = matrix / 255  # normalize to [0, 1]
 
         for j in range(3):
-            matrix[:, :, j] = make_separable(matrix[:, :, j])
+            mat = make_separable(matrix[:, :, j])
+            U, sigma, VT = np.linalg.svd(mat)
+            u = U[:, 0] * np.sqrt(sigma[0])
+            v = VT[0, :].T * np.sqrt(sigma[0])
+            print(sigma[0] / sigma[1])  # Test for image's separability
+            if i == 1:
+                u_sign[j] = u
+            else:
+                if np.dot(u_sign[j], u) < 0:
+                    v = -v
+            V_all[j, :, i - 1] = v
 
-        V_b[:, i - 1] = SVD_getvT(matrix[:, :, 0])
-        V_g[:, i - 1] = SVD_getvT(matrix[:, :, 1])
-        V_r[:, i - 1] = SVD_getvT(matrix[:, :, 2])
         print("Get %sth column of v" % i)
 
-    phir_b = V_b.dot(H_inverse)
-    phir_g = V_g.dot(H_inverse)
-    phir_r = V_r.dot(H_inverse)
+    for i in range(3):
+        phir[i] = V_all[i].dot(H_inverse)
+
     print("phir is generated")
 
-    return np.dstack([phir_b, phir_g, phir_r])
+    return phir

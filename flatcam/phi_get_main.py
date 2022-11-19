@@ -7,7 +7,7 @@ angle = 0  # -0.48 # Rotation angle of the sensor measurement.
 clip_size = (512, 512)  # Size of image clipped from the original sensor measurement: (width, height)
 downsample_size = (512, 512)  # downsample after clipping: (width, height)
 
-N = 32  # Size of hadamard matrix in calibration, size of recontructed image
+N = 128  # Size of hadamard matrix in calibration, size of recontructed image
 
 
 phil_get = horizontal(N, clip_size, downsample_size, angle)
@@ -19,8 +19,8 @@ sceneSize = [N, N]
 sensorZero = 0
 
 savemat('calib.mat',
-        {'P1b': phil_get[:, :, 0], 'P1g': phil_get[:, :, 1], 'P1r': phil_get[:, :, 2], 'Q1b': phir_get[:, :, 0],
-         'Q1g': phir_get[:, :, 1], 'Q1r': phir_get[:, :, 2], 'clipSize': clipSize, 'downsampleSize':downsampleSize,
+        {'P1b': phil_get[0, :, :], 'P1g': phil_get[1, :, :], 'P1r': phil_get[2, :, :], 'Q1b': phir_get[0, :, :],
+         'Q1g': phir_get[1, :, :], 'Q1r': phir_get[2, :, :], 'clipSize': clipSize, 'downsampleSize':downsampleSize,
          'angle': angle, 'sceneSize': sceneSize, 'sensorZero': sensorZero})
 print("phil and phir are saved")
 

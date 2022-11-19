@@ -52,24 +52,25 @@ class FlatcamSimulation:
             psf = cv2.blur(psf, (5, 5))
         psf *= amplitude_factor
         print('size of psf: ', psf.shape)
-        self.psf = psf
+        self.psf = psf.astype(np.float32)
         return self.psf
         # fig, ax = plt.subplots()
         # ax.imshow(self.psf, cmap='gray')
         # plt.show()
 
-    def simulate_measurement(self, scene: np.ndarray, blur=False):
-        scene_mat = np.zeros(self.sensor_size)
+    def simulate_measurement(self, scene: np.ndarray, blur=False, visualization=False):
+        scene_mat = np.zeros(self.sensor_size, dtype=np.float32)
         width = int(self.sensor_size[1] * self.scene_ratio)
         height = int(self.sensor_size[0] * self.scene_ratio)
         scene = cv2.resize(scene, (width, height))
         start_x = int(0.5 * scene_mat.shape[0]) - int(0.5 * height)
         start_y = int(0.5 * scene_mat.shape[1]) - int(0.5 * width)
         scene_mat[start_x:start_x + height, start_y:start_y + width] = scene
+        if visualization:
+            plt.imshow(scene_mat, cmap='gray')
+            plt.colorbar()
+            plt.show()
         # using cupy to accelerate conv2d
-        # plt.imshow(scene_mat, cmap='gray')
-        # plt.colorbar()
-        # plt.show()
         measurement = cp.asnumpy(convolve2d(cp.asarray(scene_mat), cp.asarray(self.psf), 'same'))
         measurement = cv2.flip(measurement, -1)
         if blur:
@@ -85,20 +86,23 @@ if __name__ == '__main__':
     CRA = np.pi / 6
     fc_sim = FlatcamSimulation(sensor_size, scene_ratio, CRA)
     mask = fc_sim.make_mask(mls_length=7)
-    psf = fc_sim.calculate_psf(size_factor=1.8, amplitude_factor=0.00009, blur=False)
+    psf = fc_sim.calculate_psf(size_factor=1.5, amplitude_factor=9e-5, blur=False)
 
     # scene = np.zeros((128, 128))
-    # scene[64, 64] = 1
-    # scene = cv2.circle(scene, (64, 64), 10, 1, -1, cv2.LINE_AA)
+    # scene = cv2.circle(scene, (20, 64), 1, 1, -1, cv2.LINE_AA)
 
     N = 32
     H = hadamard(N)
-    H[H == -1] = 0
+    # H[H == -1] = 0
     I_vector = np.ones((N, 1))
     h_k = H[:, 0]
     scene = np.outer(h_k, I_vector)
 
     meas = fc_sim.simulate_measurement(scene)
+
+    # meas = fc_sim.simulate_measurement(X_k_1) - fc_sim.simulate_measurement(X_k_2)
+    # meas = ((fc_sim.simulate_measurement(X_k_1) * 255).astype(np.uint8).astype(np.float64)) / 255 - (
+    #     (fc_sim.simulate_measurement(X_k_2) * 255).astype(np.uint8).astype(np.float64)) / 255
     print('meas, max = %f, min = %f:' % (np.max(meas), np.min(meas)))
     fig, ax = plt.subplots(2, 2)
     ax[0, 0].imshow(mask, cmap='gray')
@@ -110,3 +114,22 @@ if __name__ == '__main__':
     ax[1, 1].imshow(meas, cmap='gray', vmin=0, vmax=1)
     ax[1, 1].set_title('meas')
     plt.show()
+
+    rowMeans = meas.mean(axis=1, keepdims=True)
+    colMeans = meas.mean(axis=0, keepdims=True)
+    allMean = rowMeans.mean()
+    meas = meas - rowMeans - colMeans + allMean
+
+    U, sigma, VT = np.linalg.svd(meas)
+    fig, ax = plt.subplots(1, 3)
+    im=ax[0].imshow(meas, cmap='bwr')
+    fig.colorbar(im, ax=ax[0])
+    im=ax[1].imshow(sigma[0] * np.outer(U[:, 0], VT[0, :]), cmap='bwr')
+    fig.colorbar(im, ax=ax[1])
+    im=ax[2].imshow((meas-sigma[0]*np.outer(U[:, 0], VT[0, :]))/np.max(meas), cmap='bwr')
+    # im = ax[2].imshow((meas - sigma[0] * np.outer(U[:, 0], VT[0, :])), cmap='bwr')
+
+    fig.colorbar(im, ax=ax[2])
+    plt.show()
+
+    print(sigma[0] / sigma[1])

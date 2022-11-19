@@ -6,10 +6,13 @@ import numpy as np
 
 """ Load images """
 # meas = cv2.imread('data/captured/test/test.png')
-meas = cv2.imread('data/captured/calibration/horizontal/9_1.png')
+# meas = cv2.imread('data/captured/calibration/horizontal/9_1.png')
 # meas_2 = cv2.imread('data/captured/calibration/horizontal/9_2.png')
 # meas = meas_1 - meas_2
 
+meas = cv2.imread('../flatcam_simulation/data/captured/test/hall.png')
+
+meas = meas.astype(float)/255
 
 """ Load calibrated matrix phil and phir """
 calib = loadmat('calib.mat')  # load calibration data   导入标定矩阵8个
@@ -23,26 +26,17 @@ lmbd = 3e-4  # L2 regularization parameter
 recon = flatcam.fcrecon(meas.copy(), calib, lmbd)
 print('max: %f, min: %f.' % (np.max(recon), np.min(recon)))
 
-# using the reconstructed image to regenerate sensor measurement
-re_meas = np.dstack((calib['P1b'] @ recon[:, :, 0] @ calib['Q1b'].T,
-                    calib['P1g'] @ recon[:, :, 0] @ calib['Q1g'].T,
-                    calib['P1r'] @ recon[:, :, 0] @ calib['Q1r'].T
-                     ))
-
 """ Show images """
 plt.figure()
-plt.subplot(1, 3, 1)
-plt.imshow(cv2.cvtColor(meas, cv2.COLOR_BGR2RGB))
+plt.subplot(1, 2, 1)
+plt.imshow(cv2.cvtColor((meas*255).astype(np.uint8), cv2.COLOR_BGR2RGB))
 plt.axis('off')
 plt.title('FlatCam measurement')
-plt.subplot(1, 3, 2)
-plt.imshow(cv2.cvtColor(cv2.flip(recon.astype(np.uint8), 1), cv2.COLOR_BGR2RGB))
+plt.subplot(1, 2, 2)
+# plt.imshow(cv2.cvtColor(cv2.flip((recon*255).clip(0, 255).astype(np.uint8), 1), cv2.COLOR_BGR2RGB))
+plt.imshow(cv2.cvtColor((recon*255).clip(0, 255).astype(np.uint8), cv2.COLOR_BGR2RGB))
 plt.axis('off')
 plt.title('FlatCam reconstruction')
-plt.subplot(1, 3, 3)
-plt.imshow(cv2.cvtColor(re_meas.astype(np.uint8), cv2.COLOR_BGR2RGB))
-plt.axis('off')
-plt.title('regenerate measurement')
 plt.show()
 # print(recon)
 
