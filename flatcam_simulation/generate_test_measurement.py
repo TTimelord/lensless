@@ -12,10 +12,10 @@ psf = fc_sim.calculate_psf(size_factor=1.5, amplitude_factor=9e-5, blur=False)
 
 display_dir = 'data/display/test/'
 captured_dir = 'data/captured/test/'
-name = 'green'
+name = 'basketball'
 
 scene = cv2.imread(display_dir + name + '.png')
-scene_display = cv2.resize(scene, (128, 128))
+scene_display = cv2.resize(scene, (32, 32), cv2.INTER_CUBIC)
 cv2.imshow('asd', scene_display)
 cv2.waitKey(0)
 scene = scene.astype(float)/255

@@ -28,7 +28,7 @@ I_vector = np.ones((N, 1))
 
 fig, ax = plt.subplots(4, 8)
 for i in range(8):
-    scene = np.zeros((32, 32))
+    scene = np.zeros((N, N))
     scene[i*4, 16] = 1
 
     h_i = H[:, i]

@@ -9,7 +9,7 @@ which indicate image's good separability)
 """
 
 img = cv2.imread('data/captured/test/test_origin.png')
-# img = cv2.imread('data/captured/calibration/horizontal/31_2.png')
+# img = cv2.imread('data/captured/calibration/horizontal/9_2.png')
 # img_2 = cv2.imread('data/captured/calibration/horizontal/100_1.png')
 
 print(img.shape)

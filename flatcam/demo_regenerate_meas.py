@@ -23,7 +23,8 @@ flatcam.clean_calib(calib)
 # meas_1 = cv2.imread('data/captured/calibration/horizontal/49_1.png')
 # meas_2 = cv2.imread('data/captured/calibration/horizontal/49_2.png')
 
-meas = cv2.imread('../flatcam_simulation/data/captured/test/green.png')
+# meas = cv2.imread('../flatcam_simulation/data/captured/test/green.png')
+meas = cv2.imread('data/captured/test/building.png')
 
 # meas = meas_1.astype(float) - meas_2.astype(float)
 meas = meas.astype(float)/255
@@ -35,7 +36,7 @@ print('meas, max: %f, min: %f.' % (np.max(meas_processed), np.min(meas_processed
 # cv2.waitKey(0)
 
 """ Reconstruct """
-lmbd = 3e-4  # L2 regularization parameter
+# lmbd = 5e-2  # L2 regularization parameter
 # lmbd = 100
 # recon = flatcam.fcrecon(meas, calib, lmbd)
 recon = flatcam.fcrecon(meas.copy(), calib, lmbd)
@@ -57,6 +58,10 @@ print('re_meas, max: %f, min: %f.' % (np.max(re_meas), np.min(re_meas)))
 error = re_meas - meas_processed
 error_norm = np.linalg.norm(error, axis=2)
 error_max = np.max(error_norm)
+
+# recon = recon.clip(0)
+# recon = (recon - np.min(recon))/(np.max(recon) - np.min(recon))
+# recon_max = np.max(recon)
 
 """ Show images """
 plt.figure()
@@ -97,7 +102,7 @@ for i in range(3):
     plt.title('reconstruction' + color_title[i])
 
     plt.subplot(4, 5, 3 + 5 * (i + 1))
-    plt.imshow(cv2.flip(recon[:, :, 2-i], 1), vmin=-recon_max, vmax=recon_max, cmap='bwr')
+    plt.imshow(recon[:, :, 2-i], vmin=-recon_max, vmax=recon_max, cmap='bwr')
     plt.axis('off')
     plt.title('reconstruction_uncropped' + color_title[i])
     plt.colorbar(fraction=0.05, pad=0.05)

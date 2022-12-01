@@ -5,12 +5,12 @@ import cv2
 import numpy as np
 
 """ Load images """
-# meas = cv2.imread('data/captured/test/test.png')
-# meas = cv2.imread('data/captured/calibration/horizontal/9_1.png')
+meas = cv2.imread('data/captured/test/test_origin.png')
+# meas_1 = cv2.imread('data/captured/calibration/horizontal/9_1.png')
 # meas_2 = cv2.imread('data/captured/calibration/horizontal/9_2.png')
 # meas = meas_1 - meas_2
 
-meas = cv2.imread('../flatcam_simulation/data/captured/test/hall.png')
+# meas = cv2.imread('../flatcam_simulation/data/captured/test/hall.png')
 
 meas = meas.astype(float)/255
 

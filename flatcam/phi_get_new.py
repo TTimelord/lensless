@@ -8,18 +8,6 @@ from utils import process_img
 Read the image taken for calibration and generate phil and phir
 """
 
-""" SVD decomposition"""
-def SVD_getu(matrix):
-
-    return u
-
-
-def SVD_getvT(matrix):
-    U, sigma, VT = np.linalg.svd(matrix)
-    v = VT[0, :].T * np.sqrt(sigma[0])
-    print(sigma[0] / sigma[1])
-    return v
-
 
 """ Main method for calibrating phil using horizontal strip image """
 
@@ -54,6 +42,7 @@ def horizontal(N, clip_size, downsample_size, angle):
             else:
                 if np.dot(v_sign[j], v) < 0:
                     u = -u
+                print('negative')
             U_all[j, :, i - 1] = u
 
         print("Get %sth column of u" % i)
@@ -100,6 +89,7 @@ def vertical(N, clip_size, downsample_size, angle):
             else:
                 if np.dot(u_sign[j], u) < 0:
                     v = -v
+                    print('negative')
             V_all[j, :, i - 1] = v
 
         print("Get %sth column of v" % i)
