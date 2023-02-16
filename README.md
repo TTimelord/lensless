@@ -1,5 +1,4 @@
 # tactile_lensless
-The repository for new tactile sensor development.
 
 ## Real Experiment
 The folder "flatcam" contains code and data for testing lensless cameras with amplitude masks proposed in FlatCam paper.
