@@ -1,4 +1,4 @@
-# tactile_lensless
+# lensless
 
 ## Real Experiment
 The folder "flatcam" contains code and data for testing lensless cameras with amplitude masks proposed in FlatCam paper.
